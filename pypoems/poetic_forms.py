@@ -110,22 +110,4 @@ class HeroicCouplets(Poem):
             )
             return decision != "n"
 
-        if should_ask_user:
-            return self.ask_user(line, next_line, context)
-        if line.rhymes_with(next_line):
-            return True
-        if line.words[-1].last_consts is None or next_line.words[-1].last_consts is None:
-            return self.ask_user(line, next_line, context)
-        if (line.words[-1].last_consts & next_line.words[-1].last_consts):
-            # if it doesn't rhyme with previous,
-            # we can assume it rhymes with the next one
-            if not line.rhymes_with(context[-1]):
-                return True
-            # if it does rhyme with prvious,
-            # check if the next line rhymes with the one after
-            if next_line.rhymes_with(context[2]):
-                return False
-            # else, ask user
-            return self.ask_user(line, next_line, context)
-        # all else, return False
         return False
