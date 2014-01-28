@@ -9,7 +9,10 @@ class ShakespeareSonnet(PoemWithRhymeScheme):
 
 
 class HeroicCouplets(Poem):
-
+    """
+    A form mostly composed of couplets with the occassional
+    Triplet thown in
+    """
     def make_rhyming_groups(self):
         self.rhyming_groups = []
         group = []
@@ -19,7 +22,6 @@ class HeroicCouplets(Poem):
                 self.rhyming_groups.append(group)
                 group = []
         print "Rhyming groups generated"
-
 
     def initial_rhyme_creation(self):
         for line in self.lines:
@@ -64,7 +66,6 @@ class HeroicCouplets(Poem):
         print 'regenerating rhyming_groups'
         self.make_rhyming_groups()
 
-
     def check_hard_rhymes(self, line, next_line):
         return line.rhymes_with(next_line) or line.rhymes_to == next_line
 
@@ -108,9 +109,6 @@ class HeroicCouplets(Poem):
                 )
             )
             return decision != "n"
-
-        return False
-
 
         if should_ask_user:
             return self.ask_user(line, next_line, context)

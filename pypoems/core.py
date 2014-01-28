@@ -114,7 +114,6 @@ class Line(object):
         self.is_break = False
         self.words = [Word.create(position, word_text) for position, word_text in enumerate(text.split(" "))]
 
-
     @classmethod
     def create(cls, number, text):
         line = cls(number, text)
@@ -166,6 +165,7 @@ class Word(object):
     def __repr__(self):
         return self.text
 
+
 class PoemWithRhymeScheme(Poem):
     """
     Automatically generates a poem object from a rhyme_scheme,
@@ -194,6 +194,7 @@ class PoemWithRhymeScheme(Poem):
         poem.scheme_lines = zip(itertools.cycle(poem.rhyme_scheme), poem.lines_no_breaks)
         poem.make_rhyming_groups()
         return poem
+
 
 class Collection(object):
     def __init__(self, poems):
