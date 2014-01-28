@@ -1,6 +1,7 @@
 import re
 import os
 from pypoems.poetic_forms import ShakespeareSonnet
+from pypoems.core import Collection
 
 with open(os.path.abspath("texts/sonnets.txt")) as sonnet_file:
 	RAW_TEXT = sonnet_file.read()
@@ -29,18 +30,6 @@ def generate_sonnets(clean_poems):
 	# for sonnet in sonnets:
 	# 	sonnet.make_rhyming_groups()
 	return sonnets
-
-
-
-class Collection(object):
-	def __init__(self, poems):
-		self.poems = poems
-
-	def all_rhyme_pairs(self):
-		rhyme_pairs = []
-		for poem in self.poems:
-			rhyme_pairs += poem.get_rhyme_pairs()
-		return rhyme_pairs
 
 
 CROPPED_TEXT = get_cropped_text(RAW_TEXT, START, END)

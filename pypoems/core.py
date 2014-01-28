@@ -14,7 +14,7 @@ class Poem(object):
         self.author = author
         self.title = title
         self.rhyme_setup_needed = rhyme_setup_needed
-        self.lines = [Line.make_line(number, line_text.strip()) for (number, line_text) in enumerate(text.strip().split('\n'))]
+        self.lines = [Line.create(number, line_text.strip()) for (number, line_text) in enumerate(text.strip().split('\n'))]
         self.rhyming_groups = None
 
     @property
@@ -22,7 +22,7 @@ class Poem(object):
         return [line for line in self.lines if line.text]
 
     @classmethod
-    def make_poem(cls, text, author=None, title=None, rhyme_setup_needed=True):
+    def create(cls, text, author=None, title=None, rhyme_setup_needed=True):
         # import ipdb; ipdb.set_trace()
         poem = cls(text, author, title, rhyme_setup_needed)
 
@@ -87,7 +87,7 @@ class Poem(object):
             author = json_dict["author"]
             title = json_dict["title"]
             rt = json_dict["rhymes_tos"]
-            poem = cls.make_poem(text, author, title, rhyme_setup_needed=False)
+            poem = cls.create(text, author, title, rhyme_setup_needed=False)
             for line in poem.lines:
                 rhymes_to_number = rt.get(unicode(line.number))
                 if rhymes_to_number is not None:
@@ -112,11 +112,11 @@ class Line(object):
         self.text = text
         self.rhymes_to = None
         self.is_break = False
-        self.words = [Word.make_word(position, word_text) for position, word_text in enumerate(text.split(" "))]
+        self.words = [Word.create(position, word_text) for position, word_text in enumerate(text.split(" "))]
 
 
     @classmethod
-    def make_line(cls, number, text):
+    def create(cls, number, text):
         line = cls(number, text)
         if len(line.text.strip()) == 0:
             line.is_break = True
@@ -140,7 +140,7 @@ class Word(object):
         self.prons = None
 
     @classmethod
-    def make_word(cls, position, text):
+    def create(cls, position, text):
         word = cls(position, text)
         word.prons = PRON_DICT.get(word.text.lower())
         if word.prons is not None:
@@ -184,14 +184,23 @@ class PoemWithRhymeScheme(Poem):
                 if index < len(group) - 1:
                     line.rhymes_to = group[index + 1]
             self.rhyming_groups.append(group)
-        print "made rhyme group"
 
     @classmethod
     def create(cls, rhyme_scheme, *args, **kwargs):
         poem = cls(rhyme_scheme, *args, **kwargs)
-        print poem.lines_no_breaks
         if len(poem.lines_no_breaks) % len(poem.rhyme_scheme) != 0:
             # sanity check
             raise ValueError("Rhyme scheme {} does not evenly fit into poem".format(poem.rhyme_scheme))
+        poem.scheme_lines = zip(itertools.cycle(poem.rhyme_scheme), poem.lines_no_breaks)
         poem.make_rhyming_groups()
         return poem
+
+class Collection(object):
+    def __init__(self, poems):
+        self.poems = poems
+
+    def get_all_rhyme_pairs(self):
+        rhyme_pairs = []
+        for poem in self.poems:
+            rhyme_pairs += poem.get_rhyme_pairs()
+        return rhyme_pairs
