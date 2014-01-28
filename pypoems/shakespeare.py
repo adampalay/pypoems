@@ -19,15 +19,15 @@ def generate_sonnets(clean_poems):
 	sonnets = []
 	for number, poem in enumerate(clean_poems):
 		if len(poem.strip().split('\n')) == 14:
-			sonnet = ShakespeareSonnet.make_poem(
+			sonnet = ShakespeareSonnet.create(
 				poem.strip(),
 				title="Sonnet {}".format(number + 1),
 				author="William Shakespeare"
 			)
 			sonnets.append(sonnet)
 	print "Sonnets generated"
-	for sonnet in sonnets:
-		sonnet.make_rhyming_groups()
+	# for sonnet in sonnets:
+	# 	sonnet.make_rhyming_groups()
 	return sonnets
 
 

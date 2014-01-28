@@ -1,20 +1,11 @@
-from poems.core import Poem
+from pypoems.core import Poem, PoemWithRhymeScheme
 
-class ShakespeareSonnet(Poem):
 
-	def rhyme_setup(self):
-		for i in range(3):
-			base = i * 4
-			self.lines[base].rhymes_to = self.lines[base + 2]
-			self.lines[base + 1].rhymes_to = self.lines[base + 3]
-		self.lines[12].rhymes_to = self.lines[13]
-
-	def make_rhyming_groups(self):
-		self.rhyming_groups = []
-		for line in self.lines:
-			if line.rhymes_to is not None:
-				group = [line, line.rhymes_to]
-				self.rhyming_groups.append(group)
+class ShakespeareSonnet(PoemWithRhymeScheme):
+    def __init__(self, *args, **kwargs):
+        super(ShakespeareSonnet, self).__init__(
+            'ababcdcdefefgg', *args, **kwargs
+        )
 
 
 class HeroicCouplets(Poem):

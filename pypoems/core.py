@@ -14,16 +14,17 @@ class Poem(object):
         self.author = author
         self.title = title
         self.rhyme_setup_needed = rhyme_setup_needed
-        self.lines = None
-        self.lines_no_breaks = None
+        self.lines = [Line.make_line(number, line_text.strip()) for (number, line_text) in enumerate(text.strip().split('\n'))]
         self.rhyming_groups = None
+
+    @property
+    def lines_no_breaks(self):
+        return [line for line in self.lines if line.text]
 
     @classmethod
     def make_poem(cls, text, author=None, title=None, rhyme_setup_needed=True):
         # import ipdb; ipdb.set_trace()
         poem = cls(text, author, title, rhyme_setup_needed)
-        poem.lines = [Line.make_line(number, line_text.strip()) for (number, line_text) in enumerate(text.strip().split('\n'))]
-        poem.lines_no_breaks = [line for line in poem.lines if line.text]
 
         # setup next_lines and prev_lines
         for line in poem.lines:
@@ -164,3 +165,33 @@ class Word(object):
 
     def __repr__(self):
         return self.text
+
+class PoemWithRhymeScheme(Poem):
+    """
+    Automatically generates a poem object from a rhyme_scheme,
+    which looks something like 'abab'
+    """
+    def __init__(self, rhyme_scheme, *args, **kwargs):
+        kwargs.update(rhyme_setup_needed=False)
+        super(PoemWithRhymeScheme, self).__init__(*args, **kwargs)
+        self.rhyme_scheme = rhyme_scheme
+
+    def make_rhyming_groups(self):
+        self.rhyming_groups = []
+        for letter in set(self.rhyme_scheme):
+            group = [scheme_line[1] for scheme_line in self.scheme_lines if scheme_line[0] == letter]
+            for index, line in enumerate(group):
+                if index < len(group) - 1:
+                    line.rhymes_to = group[index + 1]
+            self.rhyming_groups.append(group)
+        print "made rhyme group"
+
+    @classmethod
+    def create(cls, rhyme_scheme, *args, **kwargs):
+        poem = cls(rhyme_scheme, *args, **kwargs)
+        print poem.lines_no_breaks
+        if len(poem.lines_no_breaks) % len(poem.rhyme_scheme) != 0:
+            # sanity check
+            raise ValueError("Rhyme scheme {} does not evenly fit into poem".format(poem.rhyme_scheme))
+        poem.make_rhyming_groups()
+        return poem
