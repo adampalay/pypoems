@@ -21,10 +21,12 @@ with open(volume_2_file) as v2f:
 with open(volume_1_file) as v1f:
 	volume_1 = v1f.read()
 
+
 def get_cropped_text(raw_text, start_text, end_text):
 	start_index = raw_text.find(start_text)
 	end_index = raw_text.find(end_text)
 	return raw_text[start_index: end_index]
+
 
 clean_volume_1 = get_cropped_text(volume_1, v_1_start, v_1_end)
 clean_volume_2 = get_cropped_text(volume_2, v_2_start, v_2_end)
@@ -51,6 +53,7 @@ def get_clean_poem(cropped_poem):
 
 	return "\n".join(lines)
 
+
 def get_last_syllables(prons):
     if prons is None:
         return None
@@ -61,7 +64,6 @@ def get_last_syllables(prons):
         if vowel_indices:
             last_syllables.add(tuple(pron[vowel_indices[-1]:]))
     return last_syllables
-
 
 
 PRON_DICT = nltk.corpus.cmudict.dict()
@@ -76,6 +78,7 @@ def rhymes(word, next_word):
 
 def get_rhymes_with(word, poem, deviation):
 	rhyme_groups = []
+	rhyme_lines = []
 	poem_length = len(poem)
 	poem_split = poem.split("\n")
 	for index, line in enumerate(poem_split):
@@ -88,9 +91,8 @@ def get_rhymes_with(word, poem, deviation):
 			for c_line in context:
 				if rhymes(word, c_line.split(" ")[-1]):
 					rhyme_groups.append((word, c_line.split(" ")[-1]))
-	return rhyme_groups
-
-
+					rhyme_lines.append((line, c_line))
+	return rhyme_groups, rhyme_lines
 
 
 CLEAN_POEM = get_clean_poem(CROPPED_POEM)

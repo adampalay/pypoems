@@ -2,6 +2,7 @@ import string
 import nltk
 import json
 import itertools
+import os
 
 PRON_DICT = nltk.corpus.cmudict.dict()
 
@@ -74,7 +75,7 @@ class Poem(object):
         author_save = "anonymous"
         if self.author is not None:
             author_save = self.author.replace(" ", "_").lower()
-        with open("../json/{}_{}.json".format(title_save, author_save)) as jsonfile:
+        with open(os.path.abspath("json/{}_{}.json".format(title_save, author_save)), 'wb') as jsonfile:
             json.dump(json_dict, jsonfile)
 
     @classmethod
@@ -90,6 +91,7 @@ class Poem(object):
                 rhymes_to_number = rt.get(unicode(line.number))
                 if rhymes_to_number is not None:
                     line.rhymes_to = poem.get_line(rhymes_to_number)
+            poem.make_rhyming_groups()
             return poem
 
     def get_rhyme_pairs(self):
